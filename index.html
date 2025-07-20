@@ -3,617 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>אאורה: תוכנית אסטרטגית אינטראקטיבית</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Aura Neutrals -->
-    <!-- Application Structure Plan: A single-page, scrolling application designed for a potential investor or partner. The structure follows a logical narrative: What is Aura & Why Now (Hero + Opportunity), How it Works (The Product), How it Wins (The Strategy), How it Scales (The Model), and What's Next (The Roadmap). This user-centric flow is more engaging than mirroring the report's chapters, guiding the user through the core value proposition and business case step-by-step. Interactive elements like charts and clickable diagrams are used to simplify complex information and encourage exploration. Two Gemini-powered features (Diagnosis and Content Generation) are now included to make the value proposition tangible. -->
-    <!-- Visualization & Content Choices: 
-        1. Competitive Landscape -> Goal: Compare -> Viz: Radar Chart (Chart.js) -> Interaction: Hover to see scores -> Justification: Radar charts are ideal for comparing multiple competitors (Aura, Agencies, Tools) across multiple strategic dimensions (Cost, Strategy, Scalability, Execution), instantly highlighting Aura's unique position in the market gap.
-        2. Cost Breakdown -> Goal: Inform -> Viz: Donut Chart (Chart.js) -> Interaction: Hover to see cost allocation -> Justification: A donut chart clearly and simply visualizes the proportional breakdown of initial investment, making financial data easy to digest.
-        3. "Hands-On" Workflow -> Goal: Organize/Explain -> Viz: Interactive Stepper Diagram (HTML/CSS/JS) -> Interaction: Click tabs to reveal step details -> Justification: A custom, interactive stepper is far more effective at explaining a process than a static list, making the abstract "hands-on" concept tangible and understandable.
-        4. Product Roadmap -> Goal: Show Change/Progression -> Viz: Clickable Timeline (HTML/CSS/JS) -> Interaction: Click phase to expand details -> Justification: A timeline is the most intuitive way to present chronological development, allowing users to explore the product's evolution at their own pace.
-        5. Gemini Diagnosis Demo -> Goal: Demonstrate/Engage -> Viz: Interactive Text Input/Output (HTML/JS/Gemini API) -> Interaction: User inputs a challenge, clicks a button to get an AI-generated diagnosis -> Justification: This provides a direct, hands-on experience of the core product value, moving from description to demonstration.
-        6. Gemini Content Idea Generator -> Goal: Demonstrate/Provide Utility -> Viz: Interactive Text Input/Output (HTML/JS/Gemini API) -> Interaction: User inputs a topic, gets actionable content ideas -> Justification: Offers immediate, tangible value and showcases the proactive, strategic nature of the AI agent.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title>מדד היעילות התפעולית בעידן ה-AI</title>
     <style>
-        body { font-family: 'Assistant', sans-serif; scroll-behavior: smooth; }
-        .bg-aura-background { background-color: #f8fafc; }
-        .text-aura-dark { color: #1e293b; }
-        .text-aura-primary { color: #4338ca; }
-        .bg-aura-primary { background-color: #4338ca; }
-        .border-aura-primary { border-color: #4338ca; }
-        .accent-aura-primary { accent-color: #4338ca; }
-        .section-title { font-size: 2.25rem; font-weight: 700; }
-        .section-subtitle { font-size: 1.25rem; color: #64748b; }
-        .chart-container { position: relative; width: 100%; max-width: 500px; margin: auto; height: 350px; max-height: 400px; }
-        .nav-link { transition: color 0.3s; padding: 8px 16px; border-radius: 9999px; }
-        .nav-link.active, .nav-link:hover { background-color: #eef2ff; color: #4338ca; }
-        .fade-in { opacity: 0; transition: opacity 1s ease-out; }
-        .fade-in.visible { opacity: 1; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #4338ca; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+       .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #555;
+        }
+
+       .hidden {
+            display: none;
+        }
+
+       .btn {
+            background: linear-gradient(45deg, #3498db, #8e44ad);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+       .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+       .answer-options button {
+            display: block;
+            width: 100%;
+            background-color: #ecf0f1;
+            color: #333;
+            border: 2px solid #bdc3c7;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+       .answer-options button:hover {
+            background-color: #d1d5d6;
+            border-color: #8e44ad;
+        }
+        
+        #question-text {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        #results-analysis {
+            background-color: #eaf5ff;
+            border-right: 5px solid #3498db;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: right;
+            border-radius: 5px;
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+        
+       .loader {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 40px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
     </style>
 </head>
-<body class="bg-aura-background text-aura-dark">
+<body>
 
-    <header id="header" class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm transition-all duration-300">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <span class="text-2xl font-bold text-aura-primary">✨ אאורה</span>
-                </div>
-                <nav class="hidden md:flex items-center space-x-2 lg:space-x-4">
-                    <a href="#opportunity" class="nav-link">ההזדמנות</a>
-                    <a href="#product" class="nav-link">המוצר</a>
-                    <a href="#strategy" class="nav-link">האסטרטגיה</a>
-                    <a href="#model" class="nav-link">המודל</a>
-                    <a href="#roadmap" class="nav-link">הדרך קדימה</a>
-                </nav>
-                 <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-600 hover:text-aura-primary hover:bg-gray-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                </button>
+    <div class="container" id="main-container">
+        
+        <div id="start-screen">
+            <h1>כמה יעיל תפעול השיווק שלך בעידן ה-AI?</h1>
+            <p>בתוך 3 דקות בלבד, קבלי ציון יעילות מותאם אישית וניתוח מבוסס AI המזהה את צוואר הבקבוק התפעולי מספר 1 שלך. בלי למלא פרטים, בלי התחייבות. רק ערך נטו.</p>
+            <button class="btn" id="start-btn">✨ התחלת האבחון</button>
+        </div>
+
+        <div id="quiz-screen" class="hidden">
+            <p id="question-text"></p>
+            <div id="answer-options" class="answer-options"></div>
+        </div>
+
+        <div id="loading-screen" class="hidden">
+            <h2>מנתח את התשובות שלך בעזרת Gemini AI...</h2>
+            <p>זה לוקח רק כמה שניות.</p>
+            <div class="loader"></div>
+        </div>
+
+        <div id="results-screen" class="hidden">
+            <h1>✨ הניתוח האישי שלך:</h1>
+            <p>בהתבסס על התשובות שלך, הנה תובנה מותאמת אישית על הזדמנות היעילות המרכזית שלך:</p>
+            <div id="results-analysis"></div>
+            <div id="cta-section" style="margin-top: 30px;">
+                <h2>רוצה להפוך את התובנה הזו לאסטרטגיה?</h2>
+                <p>התובנה מבוססת ה-AI סיקרנה אותך? בואי נקדיש 15 דקות, ללא עלות, כדי לפענח אותה ולזהות את הזדמנות ההכנסה היחידה הגדולה ביותר בתפעול הנוכחי שלך. בלי מצגת מכירות, רק אסטרטגיה.</p>
+                <a href="https://calendar.app.google/JGa1Ev2quNketc5M6" target="_blank" class="btn" style="text-decoration: none;">קביעת סקירת הזדמנויות של 15 דקות</a>
             </div>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
-            <a href="#opportunity" class="block py-2 px-4 text-sm hover:bg-gray-50">ההזדמנות</a>
-            <a href="#product" class="block py-2 px-4 text-sm hover:bg-gray-50">המוצר</a>
-            <a href="#strategy" class="block py-2 px-4 text-sm hover:bg-gray-50">האסטרטגיה</a>
-            <a href="#model" class="block py-2 px-4 text-sm hover:bg-gray-50">המודל</a>
-            <a href="#roadmap" class="block py-2 px-4 text-sm hover:bg-gray-50">הדרך קדימה</a>
-        </div>
-    </header>
 
-    <main class="container mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <section id="hero" class="text-center py-20 sm:py-32 fade-in">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-aura-dark leading-tight">
-                ה-<span class="text-aura-primary">Fractional CMO</span> הראשון שלך,
-                <br class="hidden md:block">
-                מבוסס בינה מלאכותית.
-            </h1>
-            <p class="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-slate-600">
-                אאורה היא שותפה אסטרטגית שעוזרת ליזמי Pre-seed לבנות את תוכנית ה-GTM שלהם ולהשיג אחיזה בשוק. לא עוד כלים גנריים או יועצים יקרים – רק ניסיון מוכח ו"בלי בולשיט", ארוז בסוכן AI חכם שעובד איתך, לא בשבילך.
-            </p>
-            <a href="#opportunity" class="mt-8 inline-block bg-aura-primary text-white font-bold py-3 px-8 rounded-full text-lg hover:opacity-90 transition-opacity">
-                גלה את ההזדמנות
-            </a>
-        </section>
-
-        <div class="space-y-24 md:space-y-32">
-
-            <section id="opportunity" class="fade-in">
-                <div class="text-center mb-12">
-                    <h2 class="section-title text-aura-dark">ההזדמנות: הגדרת קטגוריה חדשה</h2>
-                    <p class="section-subtitle mt-2 max-w-3xl mx-auto">
-                        השוק רווי בכלים טקטיים ויועצים יקרים. אאורה ממלאת את הפער הקריטי שביניהם: אסטרטגיה נגישה, סקיילבילית, ובמחיר שפוי עבור סטארטאפים בתחילת הדרך.
-                    </p>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
-                    <div class="order-2 md:order-1">
-                        <h3 class="text-2xl font-bold mb-4">נוף תחרותי: הפער בין אסטרטגיה לביצוע</h3>
-                        <p class="text-slate-600 mb-4">
-                            סוכנויות (אסטרטגיה גבוהה, עלות גבוהה) וכלים טקטיים (ביצוע גבוה, אסטרטגיה נמוכה) משאירים את יזם ה-Pre-seed לבד. הוא זקוק לגשר בין השניים. התרשים ממחיש כיצד אאורה תופסת נישה ייחודית ובעלת ערך, המשלבת את הטוב משני העולמות.
-                        </p>
-                        <ul class="space-y-2 text-slate-600">
-                            <li><span class="font-bold text-aura-primary">אאורה:</span> אסטרטגיה וביצוע מאוזנים, בעלות נמוכה.</li>
-                            <li><span class="font-bold text-yellow-500">סוכנויות (קטגוריה א'):</span> אסטרטגיה חזקה, אך יקרה ולא סקיילבילית.</li>
-                            <li><span class="font-bold text-sky-500">כלים (קטגוריה ב'):</span> ביצוע טקטי מעולה, אך חסרי חזון אסטרטגי.</li>
-                        </ul>
-                    </div>
-                    <div class="order-1 md:order-2">
-                        <div class="chart-container">
-                            <canvas id="competitorChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <section id="product" class="fade-in">
-                <div class="text-center mb-12">
-                    <h2 class="section-title text-aura-dark">המוצר: "שני וולף בקופסה"</h2>
-                    <p class="section-subtitle mt-2 max-w-3xl mx-auto">
-                        זה לא עוד צ'אטבוט גנרי. אאורה היא קידוד של 10+ שנות ניסיון בניהול שיווק. היא חדה, ישירה, פרקטית, ומדברת בשפת היזמים. היא לא רק עונה, היא בונה איתך.
-                    </p>
-                </div>
-
-                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg mb-12">
-                    <h3 class="text-2xl font-bold text-center mb-6">מודל האינטראקציה ה"מעשי"</h3>
-                     <div id="workflow-tabs" class="flex flex-col sm:flex-row justify-center border-b mb-6">
-                        <button data-content="content-1" class="workflow-tab active p-4 font-semibold border-b-2 border-aura-primary text-aura-primary">שלב 1: אבחון</button>
-                        <button data-content="content-2" class="workflow-tab p-4 font-semibold border-b-2 border-transparent text-slate-500 hover:text-aura-primary">שלב 2: בנייה משותפת</button>
-                        <button data-content="content-3" class="workflow-tab p-4 font-semibold border-b-2 border-transparent text-slate-500 hover:text-aura-primary">שלב 3: תוצר ואיטרציה</button>
-                    </div>
-                    <div id="workflow-content" class="text-center">
-                        <div id="content-1" class="workflow-content-panel">
-                            <h4 class="text-xl font-semibold mb-2">בירור ואבחון</h4>
-                            <p class="text-slate-600 max-w-xl mx-auto">אאורה מתחילה בשאלות מנחות כדי להבין את ההקשר והאתגר הדחוף ביותר. "מה עוצר אותך? בוא נבנה יחד מצגת משקיעים".</p>
-                        </div>
-                        <div id="content-2" class="workflow-content-panel hidden">
-                            <h4 class="text-xl font-semibold mb-2">בנייה משותפת של תוצרים</h4>
-                            <p class="text-slate-600 max-w-xl mx-auto">במקום להסביר *איך*, אאורה יוזמת תהליך. היא שואלת 3 שאלות עומק, קולטת את התשובות, ומייצרת טיוטה ראשונית של התוצר (למשל, שקף הבעיה במצגת).</p>
-                        </div>
-                        <div id="content-3" class="workflow-content-panel hidden">
-                           <h4 class="text-xl font-semibold mb-2">תוצר, דוגמה ואיטרציה</h4>
-                            <p class="text-slate-600 max-w-xl mx-auto">היזם מקבל טיוטה ראשונית, דוגמה מהעולם האמיתי להשוואה, והצעה לשיפור. "רוצה שנעזור לך לחדד את המסר? שלח את הטיוטה, נלטש אותה יחד."</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="gemini-demo" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
-                    <h3 class="text-2xl font-bold text-center mb-2">נסה את אאורה בעצמך ✨</h3>
-                    <p class="text-center text-slate-500 mb-6">ספר לנו על אתגר שיווקי שהסטארטאפ שלך מתמודד איתו, ואאורה תראה לך איך היא מתחילה לעבוד.</p>
-                    <div class="max-w-2xl mx-auto">
-                        <textarea id="challenge-input" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-aura-primary focus:border-aura-primary transition" rows="3" placeholder="לדוגמה: 'אני מתקשה להסביר את המוצר המורכב שלי למשקיעים' או 'אין לי מושג איך להשיג את 100 המשתמשים הראשונים'"></textarea>
-                        <button id="diagnose-button" class="mt-4 w-full bg-aura-primary text-white font-bold py-3 px-8 rounded-full text-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
-                            קבל אבחון ראשוני
-                        </button>
-                    </div>
-                    <div id="gemini-output" class="mt-6 max-w-2xl mx-auto hidden">
-                        <div id="loader" class="loader hidden"></div>
-                        <div id="response-container" class="bg-indigo-50 p-4 rounded-lg text-slate-700 whitespace-pre-wrap"></div>
-                        <div id="error-container" class="bg-red-50 p-4 rounded-lg text-red-700 hidden"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="strategy" class="fade-in">
-                <div class="text-center mb-12">
-                    <h2 class="section-title text-aura-dark">האסטרטגיה: בניית מומנטום</h2>
-                    <p class="section-subtitle mt-2 max-w-3xl mx-auto">
-                        ה-GTM שלנו ממוקד בבניית אמון וקהילה בתוך האקוסיסטם הישראלי, תוך מינוף מנהיגות מחשבתית ושותפויות אסטרטגיות כדי להגיע לקהל היעד המדויק.
-                    </p>
-                </div>
-                
-                <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 mb-12">
-                    <div class="bg-white p-6 rounded-xl shadow">
-                        <h3 class="text-xl font-bold mb-3">📢 הצעת ערך ייחודית (UVP)</h3>
-                        <p class="text-slate-600">
-                           שותף אסטרטגי נגיש, פרקטי, ובמחיר סביר, שמתרגם ניסיון אנושי מוכח ו"בלי בולשיט" לתוכניות שיווק ישימות הנבנות במשותף עם היזם.
-                        </p>
-                    </div>
-                     <div class="bg-white p-6 rounded-xl shadow">
-                        <h3 class="text-xl font-bold mb-3">🚀 ערוצי הפצה ושותפויות</h3>
-                        <p class="text-slate-600">
-                           מיקוד באקוסיסטם הישראלי: שותפויות עם קרנות הון סיכון, אקסלרטורים, וחממות כדי להציע את אאורה ככלי בעל ערך מוסף לחברות הפורטפוליו שלהן.
-                        </p>
-                    </div>
-                     <div class="bg-white p-6 rounded-xl shadow">
-                        <h3 class="text-xl font-bold mb-3">✍️ אסטרטגיית תוכן</h3>
-                        <p class="text-slate-600">
-                          "לא עוד קורס, לא עוד מאמן – שותפה שמבינה אותך, עכשיו". נדגים את הערך עם תוכן "לפני/אחרי", סיפורי "בנייה בפומבי" ותוכן מבוסס-תועלת ליזמים.
-                        </p>
-                    </div>
-                     <div class="bg-white p-6 rounded-xl shadow">
-                        <h3 class="text-xl font-bold mb-3">🇮🇱 היתרון הישראלי</h3>
-                        <p class="text-slate-600">
-                           השקה בשוק יעד צפוף, נגיש ובעל תרבות אימוץ טכנולוגי גבוהה. בניית יתרון תחרותי בנישת השפה העברית וההקשר המקומי לפני התרחבות גלובלית.
-                        </p>
-                    </div>
-                </div>
-
-                <div id="gemini-content-demo" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
-                    <h3 class="text-2xl font-bold text-center mb-2">✨ מחולל רעיונות לתוכן</h3>
-                    <p class="text-center text-slate-500 mb-6">תקועים בלי רעיונות? ספרו לאאורה על התחום שלכם והיא תייצר עבורכם רעיונות פרקטיים לתוכן.</p>
-                    <div class="max-w-2xl mx-auto">
-                        <input id="topic-input" type="text" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-aura-primary focus:border-aura-primary transition" placeholder="לדוגמה: 'סייברסקיוריטי לעסקים קטנים', 'כלי פיתוח ל-AI', 'פינטק לדור ה-Z'">
-                        <button id="generate-ideas-button" class="mt-4 w-full bg-aura-primary text-white font-bold py-3 px-8 rounded-full text-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
-                            ייצר רעיונות לתוכן
-                        </button>
-                    </div>
-                    <div id="gemini-content-output" class="mt-6 max-w-2xl mx-auto hidden">
-                        <div id="content-loader" class="loader hidden"></div>
-                        <div id="content-response-container" class="bg-indigo-50 p-4 rounded-lg text-slate-700 whitespace-pre-wrap"></div>
-                        <div id="content-error-container" class="bg-red-50 p-4 rounded-lg text-red-700 hidden"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="model" class="fade-in">
-                <div class="text-center mb-12">
-                    <h2 class="section-title text-aura-dark">המודל: תוכנית תפעולית ופיננסית</h2>
-                    <p class="section-subtitle mt-2 max-w-3xl mx-auto">
-                        המודל העסקי בנוי על מונטיזציה מדורגת וארכיטקטורה טכנית חכמה, המבטיחה רווחיות, סקיילביליות, וחפיר (moat) תחרותי ארוך טווח.
-                    </p>
-                </div>
-
-                <div class="grid lg:grid-cols-5 gap-8">
-                    <div class="lg:col-span-3">
-                        <h3 class="text-2xl font-bold mb-6">מודל תמחור SaaS מדורג</h3>
-                        <div class="grid sm:grid-cols-3 gap-6 text-center">
-                            <div class="border rounded-lg p-6 flex flex-col">
-                                <h4 class="text-lg font-bold">חינם / בטא</h4>
-                                <p class="text-4xl font-extrabold my-4">$0</p>
-                                <p class="text-slate-500 text-sm mb-4 flex-grow">ליזמים שבוחנים את המים. גישה מוגבלת לזרימת עבודה אחת.</p>
-                                <button class="mt-auto w-full bg-slate-200 text-slate-700 font-semibold py-2 rounded-lg">התחל/י בחינם</button>
-                            </div>
-                            <div class="border-2 border-aura-primary rounded-lg p-6 flex flex-col relative">
-                                <span class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-aura-primary text-white text-xs font-bold px-3 py-1 rounded-full">הכי פופולרי</span>
-                                <h4 class="text-lg font-bold">חבילת סטארטאפ</h4>
-                                <p class="text-4xl font-extrabold my-4">$99<span class="text-base font-normal text-slate-500">/חודש</span></p>
-                                <p class="text-slate-500 text-sm mb-4 flex-grow">לסטארטאפים ב-Pre-seed/Seed. גישה מלאה לזרימות עבודה, רענון אסטרטגיה חודשי.</p>
-                                 <button class="mt-auto w-full bg-aura-primary text-white font-semibold py-2 rounded-lg hover:opacity-90">בחר/י חבילה</button>
-                            </div>
-                            <div class="border rounded-lg p-6 flex flex-col">
-                                <h4 class="text-lg font-bold">חבילת Scale-up</h4>
-                                <p class="text-4xl font-extrabold my-4">$299+<span class="text-base font-normal text-slate-500">/חודש</span></p>
-                                <p class="text-slate-500 text-sm mb-4 flex-grow">לסטארטאפים בצמיחה. יצירה ללא הגבלה, ניטור פרואקטיבי, אינטגרציות פרימיום.</p>
-                                 <button class="mt-auto w-full bg-slate-200 text-slate-700 font-semibold py-2 rounded-lg">צור/י קשר</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-2">
-                         <h3 class="text-2xl font-bold mb-6">ניתוח עלויות MVP</h3>
-                        <div class="chart-container h-64 max-h-72">
-                            <canvas id="costChart"></canvas>
-                        </div>
-                         <p class="text-center text-sm text-slate-500 mt-2">השקעה ראשונית מוערכת: $25k - $60k</p>
-                    </div>
-                </div>
-            </section>
-            
-            <section id="roadmap" class="fade-in">
-                <div class="text-center mb-12">
-                    <h2 class="section-title text-aura-dark">הדרך קדימה: מפת דרכים</h2>
-                    <p class="section-subtitle mt-2 max-w-3xl mx-auto">
-                        המסע שלנו בנוי בשלבים ברורים, החל מ-MVP ממוקד ועד למימוש החזון המלא של Fractional CMO אוטונומי.
-                    </p>
-                </div>
-                
-                <div id="roadmap-container" class="relative pl-8 border-r-2 border-slate-200">
-                    <div class="roadmap-item mb-10">
-                        <div class="absolute w-6 h-6 bg-white border-4 border-aura-primary rounded-full -right-[13px] mt-1.5"></div>
-                        <h3 class="text-xl font-bold text-aura-primary mb-1">שלב 1: MVP והשקה (3-6 חודשים)</h3>
-                        <ul class="list-disc list-inside text-slate-600">
-                            <li>פיתוח MVP עם 3 מקרי שימוש מרכזיים.</li>
-                            <li>גיוס 10-15 בודקי בטא מהאקוסיסטם הישראלי.</li>
-                            <li>ביצוע קמפיין קדם-השקה לבניית רשימת המתנה.</li>
-                            <li>גיוס מימון פרה-סיד ($250k - $500k).</li>
-                        </ul>
-                    </div>
-                     <div class="roadmap-item mb-10">
-                        <div class="absolute w-6 h-6 bg-slate-200 border-4 border-white rounded-full -right-[13px] mt-1.5"></div>
-                        <h3 class="text-xl font-bold text-slate-800 mb-1">שלב 2: העמקת אינטגרציה וביצוע</h3>
-                        <p class="text-slate-600">הרחבת זרימות העבודה ובניית "שכבת ביצוע" עם אינטגרציות ל-HubSpot, Google Ads וכו', כדי לעבור מתכנון להשקה בלחיצת כפתור.</p>
-                    </div>
-                     <div class="roadmap-item mb-10">
-                        <div class="absolute w-6 h-6 bg-slate-200 border-4 border-white rounded-full -right-[13px] mt-1.5"></div>
-                        <h3 class="text-xl font-bold text-slate-800 mb-1">שלב 3: הסוכן הפרואקטיבי והאוטונומי</h3>
-                        <p class="text-slate-600">מעבר למודל פרואקטיבי. הסוכן ינטר KPIs ויציע אופטימיזציות באופן עצמאי. "אני רואה שההמרות נמוכות, אני מציעה לשנות את הקריאה לפעולה."</p>
-                    </div>
-                     <div class="roadmap-item">
-                        <div class="absolute w-6 h-6 bg-slate-200 border-4 border-white rounded-full -right-[13px] mt-1.5"></div>
-                        <h3 class="text-xl font-bold text-slate-800 mb-1">שלב 4: ה-CMO האוטונומי המלא</h3>
-                        <p class="text-slate-600">מימוש החזון המלא: הסוכן ינהל תקציבים, יקצה משאבים ויפעיל את כל פונקציית השיווק על בסיס יעדים עסקיים שהוגדרו על ידי היזם.</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <footer class="mt-24 md:mt-32 border-t bg-slate-50">
-        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-slate-500">
-             <p class="text-2xl font-bold text-aura-primary mb-2">✨ אאורה</p>
-            <p>שותפה אסטרטגית, לא כלי.</p>
-            <p class="text-sm mt-4">&copy; 2025 פרויקט אאורה. כל הזכויות שמורות.</p>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            
-            const competitorData = {
-                labels: ['אסטרטגיה', 'ביצוע טקטי', 'סקיילביליות', 'עלות נמוכה', 'התאמה אישית'],
-                datasets: [
-                    {
-                        label: 'אאורה',
-                        data: [9, 7, 9, 8, 9],
-                        backgroundColor: 'rgba(67, 56, 202, 0.2)',
-                        borderColor: 'rgba(67, 56, 202, 1)',
-                        pointBackgroundColor: 'rgba(67, 56, 202, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(67, 56, 202, 1)'
-                    },
-                    {
-                        label: 'סוכנויות',
-                        data: [8, 6, 4, 2, 8],
-                        backgroundColor: 'rgba(234, 179, 8, 0.2)',
-                        borderColor: 'rgba(234, 179, 8, 1)',
-                        pointBackgroundColor: 'rgba(234, 179, 8, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(234, 179, 8, 1)'
-                    },
-                    {
-                        label: 'כלי SaaS',
-                        data: [2, 9, 8, 7, 3],
-                        backgroundColor: 'rgba(14, 165, 233, 0.2)',
-                        borderColor: 'rgba(14, 165, 233, 1)',
-                        pointBackgroundColor: 'rgba(14, 165, 233, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(14, 165, 233, 1)'
-                    }
+        const questions = [
+            {
+                key: 'automationLevel',
+                text: 'בסולם של 1 עד 5, עד כמה תהליכי השיווק המרכזיים שלכם (מיצירת ליד ועד לקמפיין) מתנהלים באופן אוטומטי?',
+                options: [
+                    { text: '1 - הכל ידני לחלוטין', value: 1 },
+                    { text: '2', value: 2 },
+                    { text: '3 - חצי-חצי', value: 3 },
+                    { text: '4', value: 4 },
+                    { text: '5 - אוטומציה מלאה', value: 5 }
                 ]
-            };
-            const competitorConfig = {
-                type: 'radar',
-                data: competitorData,
-                options: {
-                    maintainAspectRatio: false,
-                    responsive: true,
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
-                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                            pointLabels: {
-                                font: { size: 12, family: 'Assistant' },
-                                color: '#475569'
-                            },
-                            ticks: {
-                                backdropColor: 'rgba(0,0,0,0)',
-                                color: '#64748b',
-                                stepSize: 2
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 10
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                font: { family: 'Assistant', size: 14 }
-                            }
-                        },
-                        tooltip: {
-                            bodyFont: { family: 'Assistant' },
-                            titleFont: { family: 'Assistant' }
-                        }
-                    }
-                }
-            };
-            const competitorCtx = document.getElementById('competitorChart');
-            if(competitorCtx) new Chart(competitorCtx, competitorConfig);
+            },
+            {
+                key: 'timeWaster',
+                text: 'מהו "זולל הזמן" הגדול ביותר של צוות השיווק שלך כיום?',
+                options: [
+                    { text: 'יצירת תוכן וכתיבה (קופי)', value: 'יצירת תוכן' },
+                    { text: 'ניהול קמפיינים ותפעול משימות', value: 'ניהול קמפיינים' },
+                    { text: 'ניתוח נתונים והפקת דוחות', value: 'ניתוח נתונים' },
+                    { text: 'תיאומים פנימיים ופגישות', value: 'תיאומים ופגישות' }
+                ]
+            },
+            {
+                key: 'dataUsage',
+                text: 'באיזו תדירות אתם משתמשים בנתונים (Data) כדי לקבל החלטות שיווקיות?',
+                options: [
+                    { text: 'כמעט אף פעם, פועלים לפי תחושת בטן', value: 'תחושת בטן' },
+                    { text: 'מדי פעם, כשיש דוח גדול', value: 'מדי פעם' },
+                    { text: 'באופן קבוע, רוב ההחלטות מגובות', value: 'באופן קבוע' },
+                    { text: 'תמיד, כל החלטה מבוססת נתונים', value: 'תמיד' }
+                ]
+            },
+            {
+                key: 'aiAdoption',
+                text: 'מהי רמת האימוץ של כלי AI גנרטיבי (כמו Gemini) בצוות שלך?',
+                options: [
+                    { text: 'אפסית, אין שימוש כרגע', value: 'אפסית' },
+                    { text: 'התנסות ראשונית, שימוש ספורדי', value: 'התנסות ראשונית' },
+                    { text: 'שימוש קבוע על ידי חלק מהצוות', value: 'שימוש קבוע' },
+                    { text: 'משולב באופן מלא בזרימות העבודה', value: 'משולב מלא' }
+                ]
+            },
+            {
+                key: 'martechChallenge',
+                text: 'מהו האתגר המרכזי שלך בשילוב מערך ה-MarTech הקיים שלך?',
+                options: [
+                    { text: 'הכלים לא מדברים אחד עם השני (חוסר אינטגרציה)', value: 'חוסר אינטגרציה' },
+                    { text: 'קשה להוכיח ROI מהכלים שרכשנו', value: 'קושי בהוכחת ROI' },
+                    { text: 'הצוות לא מאמץ את הכלים באופן מלא', value: 'אימוץ נמוך בצוות' },
+                    { text: 'עלויות גבוהות מדי של המערך הקיים', value: 'עלויות גבוהות' }
+                ]
+            }
+        ];
 
-            const costData = {
-                labels: ['פיתוח MVP', 'צוות ראשוני', 'עיצוב UI/UX', 'תפעול שוטף'],
-                datasets: [{
-                    data: [45, 35, 10, 10],
-                    backgroundColor: ['#4338ca', '#6d28d9', '#a78bfa', '#c4b5fd'],
-                    hoverOffset: 4
-                }]
-            };
-            const costConfig = {
-                type: 'doughnut',
-                data: costData,
-                options: {
-                    maintainAspectRatio: false,
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { font: { family: 'Assistant', size: 12 } }
-                        },
-                        tooltip: {
-                            bodyFont: { family: 'Assistant' },
-                            titleFont: { family: 'Assistant' },
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed !== null) {
-                                        label += context.parsed + '%';
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-            const costCtx = document.getElementById('costChart');
-            if(costCtx) new Chart(costCtx, costConfig);
+        let currentQuestionIndex = 0;
+        const userAnswers = {};
 
-            const workflowTabs = document.querySelectorAll('.workflow-tab');
-            const workflowPanels = document.querySelectorAll('.workflow-content-panel');
-            workflowTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    workflowTabs.forEach(t => {
-                        t.classList.remove('active', 'text-aura-primary', 'border-aura-primary');
-                        t.classList.add('text-slate-500', 'border-transparent');
-                    });
-                    tab.classList.add('active', 'text-aura-primary', 'border-aura-primary');
-                    tab.classList.remove('text-slate-500', 'border-transparent');
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const loadingScreen = document.getElementById('loading-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        
+        const startBtn = document.getElementById('start-btn');
+        const questionText = document.getElementById('question-text');
+        const answerOptions = document.getElementById('answer-options');
+        const resultsAnalysis = document.getElementById('results-analysis');
 
-                    const contentId = tab.getAttribute('data-content');
-                    workflowPanels.forEach(panel => {
-                        if (panel.id === contentId) {
-                            panel.classList.remove('hidden');
-                        } else {
-                            panel.classList.add('hidden');
-                        }
-                    });
-                });
+        startBtn.addEventListener('click', startQuiz);
+
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionText.textContent = question.text;
+            answerOptions.innerHTML = '';
+            question.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option.text;
+                button.onclick = () => selectAnswer(question.key, option.value);
+                answerOptions.appendChild(button);
             });
+        }
+
+        function selectAnswer(key, value) {
+            userAnswers[key] = value;
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showLoadingAndGetResults();
+            }
+        }
+
+        function showLoadingAndGetResults() {
+            quizScreen.classList.add('hidden');
+            loadingScreen.classList.remove('hidden');
+            getAIResults();
+        }
+
+        async function getAIResults() {
+            const prompt = `
+                אתה יועץ MarTech ותפעול ברמה עולמית עם 15 שנות ניסיון. הטון שלך הוא בעל תובנות, אסטרטגי ומעודד. אתה מתמחה בזיהוי חוסר יעילות חבוי והזדמנויות לצמיחה.
+
+                אתה מנתח את התוצאות של 'מדד יעילות תפעול השיווק' עבור משתמשת. המטרה שלך היא לספק ניתוח קצר, מותאם אישית, והמלצה אחת, ספציפית וניתנת ליישום.
+
+                להלן נתוני המשתמשת:
+                - רמת אוטומציה (1-5): ${userAnswers.automationLevel}
+                - זולל הזמן הגדול ביותר: "${userAnswers.timeWaster}"
+                - שימוש בנתונים לקבלת החלטות: "${userAnswers.dataUsage}"
+                - רמת אימוץ AI: "${userAnswers.aiAdoption}"
+                - אתגר MarTech מרכזי: "${userAnswers.martechChallenge}"
+
+                בהתבסס על נתונים אלה, כתוב פסקה של 3-4 משפטים. התחל בהכרה במצבה. לאחר מכן, זהה את הבעיה הבסיסית הסבירה ביותר המקשרת בין האתגרים שלה. סיים עם המלצה אחת ספציפית ובעלת השפעה גבוהה שהיא יכולה לבחון השבוע.
+
+                אל תשתמש בז'רגון שיווקי. אל תמכור שום מוצר. התמקד במתן עצה אמיתית וניתנת ליישום. הפלט לא יעלה על 100 מילים.
+            `;
             
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('section');
-            const headerHeight = document.getElementById('header').offsetHeight;
-
-            const sectionObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        navLinks.forEach(link => {
-                            link.classList.remove('active');
-                            if (link.getAttribute('href').substring(1) === entry.target.id) {
-                                link.classList.add('active');
-                            }
-                        });
-                    }
-                });
-            }, { rootMargin: `-${headerHeight}px 0px 0px 0px` });
-            sections.forEach(section => sectionObserver.observe(section));
-
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
+            // Gemini API call setup
+            const apiKey = ""; // The environment will provide the key
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             
-            document.querySelectorAll('#mobile-menu a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.add('hidden');
+            const payload = {
+              contents: [{
+                role: "user",
+                parts: [{ text: prompt }]
+              }]
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
-            });
 
-            // Gemini Demo Logic
-            const diagnoseButton = document.getElementById('diagnose-button');
-            const challengeInput = document.getElementById('challenge-input');
-            const geminiOutput = document.getElementById('gemini-output');
-            const loader = document.getElementById('loader');
-            const responseContainer = document.getElementById('response-container');
-            const errorContainer = document.getElementById('error-container');
-
-            diagnoseButton.addEventListener('click', async () => {
-                const userInput = challengeInput.value.trim();
-                if (!userInput) {
-                    errorContainer.textContent = 'אנא הזן אתגר שיווקי.';
-                    errorContainer.classList.remove('hidden');
-                    geminiOutput.classList.remove('hidden');
-                    responseContainer.classList.add('hidden');
-                    return;
+                if (!response.ok) {
+                    throw new Error(`שגיאת API: ${response.statusText}`);
                 }
 
-                diagnoseButton.disabled = true;
-                geminiOutput.classList.remove('hidden');
-                loader.classList.remove('hidden');
-                responseContainer.classList.add('hidden');
-                errorContainer.classList.add('hidden');
-
-                const prompt = `You are 'Aura', an AI Fractional CMO for pre-seed startups. Your persona is sharp, direct, practical, and uses a 'no bullshit' tone, based on the expertise of a 10+ year marketing veteran. A founder has described their challenge: '${userInput}'. Your task is to provide a 'Step 1: Diagnosis' response. Start by acknowledging the challenge and then ask 2-3 critical, clarifying questions that will help you build a GTM strategy for them. Frame this as the beginning of a collaborative process. Keep the response concise, actionable, and in Hebrew.`;
-
-                try {
-                    let chatHistory = [];
-                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                    const payload = { contents: chatHistory };
-                    const apiKey = ""; 
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API error: ${response.statusText}`);
-                    }
-
-                    const result = await response.json();
-                    
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const text = result.candidates[0].content.parts[0].text;
-                        responseContainer.textContent = text;
-                        responseContainer.classList.remove('hidden');
-                    } else {
-                        throw new Error('לא התקבלה תשובה תקינה מה-API.');
-                    }
-
-                } catch (error) {
-                    console.error('Gemini API Error:', error);
-                    errorContainer.textContent = 'אופס, משהו השתבש. אנא נסה שוב מאוחר יותר.';
-                    errorContainer.classList.remove('hidden');
-                } finally {
-                    loader.classList.add('hidden');
-                    diagnoseButton.disabled = false;
-                }
-            });
-
-            // Gemini Content Idea Generator Logic
-            const generateIdeasButton = document.getElementById('generate-ideas-button');
-            const topicInput = document.getElementById('topic-input');
-            const geminiContentOutput = document.getElementById('gemini-content-output');
-            const contentLoader = document.getElementById('content-loader');
-            const contentResponseContainer = document.getElementById('content-response-container');
-            const contentErrorContainer = document.getElementById('content-error-container');
-
-            generateIdeasButton.addEventListener('click', async () => {
-                const userInput = topicInput.value.trim();
-                if (!userInput) {
-                    contentErrorContainer.textContent = 'אנא הזן נושא או תחום.';
-                    contentErrorContainer.classList.remove('hidden');
-                    geminiContentOutput.classList.remove('hidden');
-                    contentResponseContainer.classList.add('hidden');
-                    return;
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                  const analysis = result.candidates[0].content.parts[0].text;
+                  resultsAnalysis.textContent = analysis;
+                } else {
+                  throw new Error('תגובת ה-API אינה מכילה תוכן תקין.');
                 }
 
-                generateIdeasButton.disabled = true;
-                geminiContentOutput.classList.remove('hidden');
-                contentLoader.classList.remove('hidden');
-                contentResponseContainer.classList.add('hidden');
-                contentErrorContainer.classList.add('hidden');
-
-                const prompt = `You are 'Aura', an AI Fractional CMO for pre-seed startups. Your persona is sharp, direct, practical, and uses a 'no bullshit' tone. A founder's startup is about '${userInput}'. Your task is to generate 3 distinct, actionable content ideas to help them build thought leadership. For each idea, provide a title/hook and a brief description of the angle. Present the output as a numbered list. Keep the response concise and in Hebrew.`;
-
-                try {
-                    let chatHistory = [];
-                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                    const payload = { contents: chatHistory };
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API error: ${response.statusText}`);
-                    }
-
-                    const result = await response.json();
-
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const text = result.candidates[0].content.parts[0].text;
-                        contentResponseContainer.textContent = text;
-                        contentResponseContainer.classList.remove('hidden');
-                    } else {
-                        throw new Error('לא התקבלה תשובה תקינה מה-API.');
-                    }
-
-                } catch (error) {
-                    console.error('Gemini API Error:', error);
-                    contentErrorContainer.textContent = 'אופס, משהו השתבש. אנא נסה שוב מאוחר יותר.';
-                    contentErrorContainer.classList.remove('hidden');
-                } finally {
-                    contentLoader.classList.add('hidden');
-                    generateIdeasButton.disabled = false;
-                }
-            });
-        });
+            } catch (error) {
+                console.error('שגיאה בקבלת ניתוח AI:', error);
+                resultsAnalysis.textContent = 'אופס, נתקלנו בבעיה רגעית בניתוח התוצאות. אנא נסו לרענן את העמוד ולנסות שוב.';
+            } finally {
+                loadingScreen.classList.add('hidden');
+                resultsScreen.classList.remove('hidden');
+            }
+        }
     </script>
+
 </body>
 </html>
