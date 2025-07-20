@@ -87,6 +87,7 @@
             border-radius: 5px;
             font-size: 1.1em;
             line-height: 1.7;
+            white-space: pre-wrap; /* This will respect newlines from the AI response */
         }
         .loader {
             border: 8px solid #f3f3f3;
@@ -131,16 +132,19 @@
         </div>
     </div>
     <script>
+        // --- CONFIGURATION ---
+        const WEBHOOK_URL = 'https://eo3knqie30y3fhp.m.pipedream.net';
+
         const questions = [
             {
                 key: 'automationLevel',
                 text: 'בסולם של 1 עד 5, עד כמה תהליכי השיווק המרכזיים שלכם (מיצירת ליד ועד לקמפיין) מתנהלים באופן אוטומטי?',
                 options: [
-                    { text: '1 - הכל ידני לחלוטין', value: 1 },
-                    { text: '2', value: 2 },
-                    { text: '3 - חצי-חצי', value: 3 },
-                    { text: '4', value: 4 },
-                    { text: '5 - אוטומציה מלאה', value: 5 }
+                    { text: '1 - הכל ידני לחלוטין', value: '1' },
+                    { text: '2', value: '2' },
+                    { text: '3 - חצי-חצי', value: '3' },
+                    { text: '4', value: '4' },
+                    { text: '5 - אוטומציה מלאה', value: '5' }
                 ]
             },
             {
@@ -165,7 +169,7 @@
             },
             {
                 key: 'aiAdoption',
-                text: 'מהי רמת האימוץ של כלי AI גנרטיבי (כמו Gemini) בצוות שלך?',
+                text: 'מהי רמת האימוץ של כלי AI גנרטיבי בצוות שלך?',
                 options: [
                     { text: 'אפסית, אין שימוש כרגע', value: 'אפסית' },
                     { text: 'התנסות ראשונית, שימוש ספורדי', value: 'התנסות ראשונית' },
@@ -184,7 +188,11 @@
                 ]
             }
         ];
+
+        // --- SCRIPT LOGIC (No need to edit below this line) ---
         let currentQuestionIndex = 0;
+        const userAnswers = {};
+
         const startScreen = document.getElementById('start-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const loadingScreen = document.getElementById('loading-screen');
@@ -209,33 +217,58 @@
             question.options.forEach(option => {
                 const button = document.createElement('button');
                 button.textContent = option.text;
-                button.onclick = () => selectAnswer();
+                // Correctly pass the key and value to the selectAnswer function
+                button.onclick = () => selectAnswer(question.key, option.value);
                 answerOptions.appendChild(button);
             });
         }
 
-        function selectAnswer() {
+        function selectAnswer(key, value) {
+            userAnswers[key] = value;
+            console.log('Answer stored:', key, value);
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 showQuestion();
             } else {
+                console.log('Quiz finished. Final answers:', userAnswers);
                 showLoadingAndGetResults();
             }
         }
 
-        function showLoadingAndGetResults() {
+        async function showLoadingAndGetResults() {
             quizScreen.classList.add('hidden');
             loadingScreen.classList.remove('hidden');
-            
-            // מדמה טעינה של 2 שניות
-            setTimeout(() => {
-                const exampleAnalysis = "זה נפוץ שצוותים מרגישים שהם מוצפים בניהול קמפיינים, במיוחד כשרמת האוטומציה עדיין לא מלאה. זה מצביע לעתים קרובות על נתק בין הכלים השונים במערך ה-Martech שלכם. ההזדמנות הגדולה ביותר שלכם טמונה בבניית 'גשר' אוטומטי בין מערכת ה-CRM לכלי ניהול המשימות, כדי שכל ליד חדש יפתח משימה באופן אוטומטי ויחסוך לצוות שעות עבודה יקרות.";
-                resultsAnalysis.textContent = exampleAnalysis;
+
+            try {
+                console.log('Sending data to webhook:', WEBHOOK_URL);
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userAnswers)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Webhook returned an error! Status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('Received response from webhook:', result);
+
+                // Assuming the webhook returns a simple text response in a field called 'analysis'
+                // Adjust 'result.analysis' if your Pipedream workflow returns a different structure
+                const analysisText = result.analysis || "לא התקבלה תשובה מהשרת. נסו שוב מאוחר יותר.";
+                resultsAnalysis.textContent = analysisText;
+
+            } catch (error) {
+                console.error('Error calling webhook:', error);
+                resultsAnalysis.textContent = "אופס, נתקלנו בבעיה טכנית. אנא נסו שוב מאוחר יותר.";
+            } finally {
                 loadingScreen.classList.add('hidden');
                 resultsScreen.classList.remove('hidden');
-            }, 2000);
+            }
         }
     </script>
 </body>
 </html>
-<script src="roi-calculator-integration.js"></script>
