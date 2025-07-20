@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="origin">
     <title>מדד היעילות התפעולית בעידן ה-AI</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap');
@@ -116,7 +115,7 @@
             <div id="answer-options" class="answer-options"></div>
         </div>
         <div id="loading-screen" class="hidden">
-            <h2>מנתח את התשובות שלך בעזרת Gemini AI...</h2>
+            <h2>מנתח את התשובות שלך...</h2>
             <p>זה לוקח רק כמה שניות.</p>
             <div class="loader"></div>
         </div>
@@ -186,7 +185,6 @@
             }
         ];
         let currentQuestionIndex = 0;
-        const userAnswers = {};
         const startScreen = document.getElementById('start-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const loadingScreen = document.getElementById('loading-screen');
@@ -195,12 +193,15 @@
         const questionText = document.getElementById('question-text');
         const answerOptions = document.getElementById('answer-options');
         const resultsAnalysis = document.getElementById('results-analysis');
+
         startBtn.addEventListener('click', startQuiz);
+
         function startQuiz() {
             startScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
             showQuestion();
         }
+
         function showQuestion() {
             const question = questions[currentQuestionIndex];
             questionText.textContent = question.text;
@@ -208,12 +209,12 @@
             question.options.forEach(option => {
                 const button = document.createElement('button');
                 button.textContent = option.text;
-                button.onclick = () => selectAnswer(question.key, option.value);
+                button.onclick = () => selectAnswer();
                 answerOptions.appendChild(button);
             });
         }
-        function selectAnswer(key, value) {
-            userAnswers[key] = value;
+
+        function selectAnswer() {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 showQuestion();
@@ -221,60 +222,18 @@
                 showLoadingAndGetResults();
             }
         }
+
         function showLoadingAndGetResults() {
             quizScreen.classList.add('hidden');
             loadingScreen.classList.remove('hidden');
-            getAIResults();
-        }
-        async function getAIResults() {
-            // אל תכניסי כאן מפתח! המערכת תספק אותו אוטומטית.
-            const apiKey = "";
-            const prompt = `
-                אתה יועץ MarTech ותפעול ברמה עולמית עם 15 שנות ניסיון. הטון שלך הוא בעל תובנות, אסטרטגי ומעודד. אתה מתמחה בזיהוי חוסר יעילות חבוי והזדמנויות לצמיחה.
-                אתה מנתח את התוצאות של 'מדד יעילות תפעול השיווק' עבור משתמשת. המטרה שלך היא לספק ניתוח קצר, מותאם אישית, והמלצה אחת, ספציפית וניתנת ליישום.
-                להלן נתוני המשתמשת:
-                - רמת אוטומציה (1-5): ${userAnswers.automationLevel}
-                - זולל הזמן הגדול ביותר: "${userAnswers.timeWaster}"
-                - שימוש בנתונים לקבלת החלטות: "${userAnswers.dataUsage}"
-                - רמת אימוץ AI: "${userAnswers.aiAdoption}"
-                - אתגר MarTech מרכזי: "${userAnswers.martechChallenge}"
-                בהתבסס על נתונים אלה, כתוב פסקה של 3-4 משפטים. התחל בהכרה במצבה. לאחר מכן, זהה את הבעיה הבסיסית הסבירה ביותר המקשרת בין האתגרים שלה. סיים עם המלצה אחת ספציפית ובעלת השפעה גבוהה שהיא יכולה לבחון השבוע.
-                אל תשתמש בז'רגון שיווקי. אל תמכור שום מוצר. התמקד במתן עצה אמיתית וניתנת ליישום. הפלט לא יעלה על 100 מילים.
-            `;
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
-            const payload = {
-              contents: [{
-                role: "user",
-                parts: [{ text: prompt }]
-              }]
-            };
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error('API Error Response:', errorData);
-                    throw new Error(`שגיאת API: ${response.statusText} (${response.status})`);
-                }
-                const result = await response.json();
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                  const analysis = result.candidates[0].content.parts[0].text;
-                  resultsAnalysis.textContent = analysis;
-                } else {
-                  throw new Error('תגובת ה-API אינה מכילה תוכן תקין.');
-                }
-            } catch (error) {
-                console.error('שגיאה בקבלת ניתוח AI:', error);
-                resultsAnalysis.textContent = 'אופס, נתקלנו בבעיה רגעית בניתוח התוצאות. אנא נסו לרענן את העמוד ולנסות שוב.';
-            } finally {
+            
+            // מדמה טעינה של 2 שניות
+            setTimeout(() => {
+                const exampleAnalysis = "זה נפוץ שצוותים מרגישים שהם מוצפים בניהול קמפיינים, במיוחד כשרמת האוטומציה עדיין לא מלאה. זה מצביע לעתים קרובות על נתק בין הכלים השונים במערך ה-Martech שלכם. ההזדמנות הגדולה ביותר שלכם טמונה בבניית 'גשר' אוטומטי בין מערכת ה-CRM לכלי ניהול המשימות, כדי שכל ליד חדש יפתח משימה באופן אוטומטי ויחסוך לצוות שעות עבודה יקרות.";
+                resultsAnalysis.textContent = exampleAnalysis;
                 loadingScreen.classList.add('hidden');
                 resultsScreen.classList.remove('hidden');
-            }
+            }, 2000);
         }
     </script>
 </body>
