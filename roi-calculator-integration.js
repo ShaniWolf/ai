@@ -1,203 +1,198 @@
-// ROI Calculator Integration with Pipedream
-// This script connects the ROI calculator form to the Pipedream webhook
+// ROI Calculator Integration with Pipedream Webhook
+// This script integrates the existing marketing effectiveness quiz with OpenAI analysis
 
-const WEBHOOK_URL = 'https://eo3knqie30y3fhp.m.pipedream.net';
-
-// Function to collect form data
-function collectROIFormData() {
-    const formData = {};
+(function() {
+    'use strict';
     
-    // Basic contact information
-    const nameField = document.querySelector('#name, [name="name"], .name-field');
-    const emailField = document.querySelector('#email, [name="email"], .email-field');
-    const companyField = document.querySelector('#company, [name="company"], .company-field');
-    const phoneField = document.querySelector('#phone, [name="phone"], .phone-field');
+    // Configuration
+    const WEBHOOK_URL = 'https://eo3knqie30y3fhp.m.pipedream.net';
     
-    if (nameField) formData.name = nameField.value;
-    if (emailField) formData.email = emailField.value;
-    if (companyField) formData.company = companyField.value;
-    if (phoneField) formData.phone = phoneField.value;
+    // Store quiz answers
+    let quizAnswers = {};
+    let currentQuestion = 0;
     
-    // ROI Calculator specific fields
-    const revenueField = document.querySelector('#revenue, [name="revenue"], .revenue-field');
-    const budgetField = document.querySelector('#budget, [name="budget"], .budget-field');
-    const employeesField = document.querySelector('#employees, [name="employees"], .employees-field');
-    const industryField = document.querySelector('#industry, [name="industry"], .industry-field');
-    const goalsField = document.querySelector('#goals, [name="goals"], .goals-field');
+    // Question mapping for the 5 marketing effectiveness questions
+    const questionKeys = [
+        'automationLevel',
+        'timeWaster', 
+        'dataTracking',
+        'leadGeneration',
+        'marketingROI'
+    ];
     
-    if (revenueField) formData.currentRevenue = revenueField.value;
-    if (budgetField) formData.marketingBudget = budgetField.value;
-    if (employeesField) formData.employeeCount = employeesField.value;
-    if (industryField) formData.industry = industryField.value;
-    if (goalsField) formData.businessGoals = goalsField.value;
+    // Override the existing selectAnswer function
+    const originalSelectAnswer = window.selectAnswer;
+    window.selectAnswer = function(questionIndex, answerValue, answerText) {
+        // Call original function to maintain existing UI behavior
+        if (originalSelectAnswer) {
+            originalSelectAnswer(questionIndex, answerValue, answerText);
+        }
+        
+        // Store the answer
+        const questionKey = questionKeys[questionIndex];
+        if (questionKey) {
+            quizAnswers[questionKey] = {
+                value: answerValue,
+                text: answerText,
+                questionIndex: questionIndex
+            };
+        }
+        
+        console.log('Answer stored:', questionKey, answerValue, answerText);
+        
+        // Check if this is the last question
+        if (questionIndex === questionKeys.length - 1) {
+            // Small delay to ensure UI updates, then send to webhook
+            setTimeout(() => {
+                sendQuizDataToWebhook();
+            }, 500);
+        }
+    };
     
-    // Add timestamp and source
-    formData.timestamp = new Date().toISOString();
-    formData.source = 'hireyourcmo.ai';
-    formData.calculatorType = 'ROI';
-    
-    return formData;
-}
-
-// Function to display ROI results
-function displayROIResults(analysisData) {
-    const resultsContainer = document.querySelector('#roi-results, .roi-results, .results-container');
-    
-    if (!resultsContainer) {
-        console.error('Results container not found');
-        return;
+    // Function to send quiz data to Pipedream webhook
+    async function sendQuizDataToWebhook() {
+        try {
+            console.log('Sending quiz data to webhook:', quizAnswers);
+            
+            // Prepare the payload
+            const payload = {
+                quizType: 'marketing_effectiveness',
+                answers: quizAnswers,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                referrer: document.referrer,
+                url: window.location.href
+            };
+            
+            // Show loading state
+            showLoadingState();
+            
+            // Send to webhook
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('Webhook response:', result);
+            
+            // Display the real AI analysis results
+            displayResults(result);
+            
+        } catch (error) {
+            console.error('Error sending quiz data:', error);
+            // Show fallback results if webhook fails
+            displayFallbackResults();
+        }
     }
     
-    const analysis = analysisData.roi_analysis;
+    // Function to show loading state
+    function showLoadingState() {
+        const resultsContainer = document.getElementById('quiz-results') || 
+                               document.querySelector('.quiz-results') ||
+                               document.querySelector('#results');
+        
+        if (resultsContainer) {
+            resultsContainer.innerHTML = `
+                <div class="loading-container" style="text-align: center; padding: 20px;">
+                    <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 0 auto 20px;"></div>
+                    <h3>מנתח את התשובות שלך...</h3>
+                    <p>אנא המתן בזמן שאנו מכינים עבורך ניתוח מותאם אישית</p>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+        }
+    }
     
-    const resultsHTML = `
-        <div class="roi-analysis-results">
-            <h3>תוצאות ניתוח ROI מותאמות אישית</h3>
-            
-            <div class="executive-summary">
-                <h4>סיכום מנהלים</h4>
-                <p>${analysis.executive_summary}</p>
-            </div>
-            
-            <div class="roi-metrics">
-                <h4>מדדי ROI</h4>
-                <ul>
-                    <li>אחוז ROI משוער: ${analysis.roi_metrics.estimated_roi_percentage}%</li>
-                    <li>תקופת החזר: ${analysis.roi_metrics.payback_period_years} שנים</li>
-                    <li>NPV: $${analysis.roi_metrics.npv}</li>
-                </ul>
-            </div>
-            
-            <div class="recommendations">
-                <h4>המלצות</h4>
-                <ul>
-                    ${analysis.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                </ul>
-            </div>
-            
-            <div class="risk-assessment">
-                <h4>הערכת סיכונים</h4>
-                <div class="risks">
-                    <h5>סיכונים פוטנציאליים:</h5>
-                    <ul>
-                        ${analysis.risk_assessment.potential_risks.map(risk => `<li>${risk}</li>`).join('')}
+    // Function to display real AI analysis results
+    function displayResults(data) {
+        const resultsContainer = document.getElementById('quiz-results') || 
+                               document.querySelector('.quiz-results') ||
+                               document.querySelector('#results');
+        
+        if (!resultsContainer) {
+            console.error('Results container not found');
+            return;
+        }
+        
+        const { quiz_results, analysis, next_steps } = data;
+        
+        resultsContainer.innerHTML = `
+            <div class="ai-results" style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+                <div class="score-section" style="text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px;">
+                    <h2 style="margin: 0 0 10px 0;">הציון שלך</h2>
+                    <div class="score-display" style="font-size: 48px; font-weight: bold; margin: 10px 0;">${quiz_results.score}/${quiz_results.max_score}</div>
+                    <div class="percentage" style="font-size: 24px; margin: 5px 0;">${quiz_results.percentage}%</div>
+                    <div class="performance-level" style="font-size: 18px; background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; display: inline-block;">${quiz_results.performance_level}</div>
+                </div>
+                
+                <div class="analysis-section" style="margin-bottom: 25px;">
+                    <h3 style="color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">ניתוח התוצאות</h3>
+                    <p style="font-size: 16px; line-height: 1.6; color: #555;">${analysis.summary}</p>
+                </div>
+                
+                <div class="strengths-section" style="margin-bottom: 25px;">
+                    <h3 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 10px;">הנקודות החזקות שלך</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        ${analysis.strengths.map(strength => `<li style="padding: 8px 0; border-left: 4px solid #27ae60; padding-left: 15px; margin: 10px 0; background: #f8f9fa;">✓ ${strength}</li>`).join('')}
                     </ul>
                 </div>
-                <div class="mitigation">
-                    <h5>אסטרטגיות הפחתת סיכונים:</h5>
-                    <ul>
-                        ${analysis.risk_assessment.mitigation_strategies.map(strategy => `<li>${strategy}</li>`).join('')}
+                
+                <div class="opportunities-section" style="margin-bottom: 25px;">
+                    <h3 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 10px;">הזדמנויות לשיפור</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        ${analysis.opportunities.map(opportunity => `<li style="padding: 8px 0; border-left: 4px solid #e74c3c; padding-left: 15px; margin: 10px 0; background: #f8f9fa;">→ ${opportunity}</li>`).join('')}
                     </ul>
                 </div>
+                
+                <div class="next-steps-section" style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                    <h3 style="color: #333; margin-bottom: 15px;">הצעד הבא</h3>
+                    <p style="font-size: 16px; color: #555; margin-bottom: 20px;">${next_steps.message}</p>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">${next_steps.call_to_action}</p>
+                    ${next_steps.contact_email ? `<a href="mailto:${next_steps.contact_email}" style="display: inline-block; background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 5px; font-weight: bold;">צור קשר במייל</a>` : ''}
+                    ${next_steps.contact_phone ? `<a href="tel:${next_steps.contact_phone}" style="display: inline-block; background: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 5px; font-weight: bold;">התקשר עכשיו</a>` : ''}
+                </div>
             </div>
-            
-            <div class="timeline">
-                <h4>לוח זמנים ליישום</h4>
-                <ul>
-                    <li>השקעה ראשונית: ${analysis.timeline.initial_investment}</li>
-                    <li>השקת קמפיין שיווקי: ${analysis.timeline.marketing_campaign_launch}</li>
-                    <li>אופטימיזציה של שרשרת האספקה: ${analysis.timeline.supply_chain_optimization}</li>
-                    <li>השלמת שדרוג טכנולוגי: ${analysis.timeline.technology_upgrade_completion}</li>
-                    <li>מימוש ROI צפוי: ${analysis.timeline.expected_roi_realization}</li>
-                </ul>
-            </div>
-            
-            <div class="financial-projections">
-                <h4>תחזיות פיננסיות</h4>
-                <p>עלות השקעה ראשונית: $${analysis.financial_projections.initial_investment_cost}</p>
-                <p>הכנסות שנתיות צפויות: ${analysis.financial_projections.projected_annual_revenue.join(', ')}</p>
-                <p>חיסכון שנתי צפוי: ${analysis.financial_projections.projected_annual_savings.join(', ')}</p>
-            </div>
-        </div>
-    `;
-    
-    resultsContainer.innerHTML = resultsHTML;
-    resultsContainer.style.display = 'block';
-}
-
-// Function to show loading state
-function showLoading() {
-    const resultsContainer = document.querySelector('#roi-results, .roi-results, .results-container');
-    if (resultsContainer) {
-        resultsContainer.innerHTML = '<div class="loading">מעבד את הנתונים שלך עם AI... אנא המתן</div>';
-        resultsContainer.style.display = 'block';
-    }
-}
-
-// Function to show error
-function showError(message) {
-    const resultsContainer = document.querySelector('#roi-results, .roi-results, .results-container');
-    if (resultsContainer) {
-        resultsContainer.innerHTML = `<div class="error">שגיאה: ${message}</div>`;
-        resultsContainer.style.display = 'block';
-    }
-}
-
-// Main function to handle form submission
-async function handleROIFormSubmission(event) {
-    if (event) {
-        event.preventDefault();
+        `;
     }
     
-    try {
-        showLoading();
+    // Fallback function if webhook fails
+    function displayFallbackResults() {
+        const resultsContainer = document.getElementById('quiz-results') || 
+                               document.querySelector('.quiz-results') ||
+                               document.querySelector('#results');
         
-        // Collect form data
-        const formData = collectROIFormData();
-        
-        console.log('Sending data to Pipedream:', formData);
-        
-        // Send to Pipedream webhook
-        const response = await fetch(WEBHOOK_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
+        if (resultsContainer) {
+            resultsContainer.innerHTML = `
+                <div class="fallback-results" style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <h3 style="color: #e74c3c;">שגיאה זמנית</h3>
+                    <p>מצטערים, אירעה שגיאה בעת ניתוח התשובות. אנא נסה שוב מאוחר יותר או צור איתנו קשר ישירות.</p>
+                    <p><strong>לקבלת ניתוח מותאם אישית, צור קשר:</strong></p>
+                    <a href="mailto:shani@shani.marketing" style="display: inline-block; background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px;">shani@shani.marketing</a>
+                </div>
+            `;
+        }
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('ROI Calculator Integration loaded');
         });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('Received analysis:', result);
-        
-        // Display results
-        displayROIResults(result);
-        
-    } catch (error) {
-        console.error('Error processing ROI calculation:', error);
-        showError('אירעה שגיאה בעיבוד הנתונים. אנא נסה שוב.');
-    }
-}
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Find the ROI form
-    const roiForm = document.querySelector('#roi-form, .roi-form, form[data-roi], form.calculator-form');
-    
-    if (roiForm) {
-        roiForm.addEventListener('submit', handleROIFormSubmission);
-        console.log('ROI Calculator integration initialized');
     } else {
-        console.warn('ROI form not found. Looking for submit button...');
-        
-        // Alternative: look for submit button
-        const submitButton = document.querySelector('#calculate-roi, .calculate-roi, [data-calculate], .submit-btn');
-        if (submitButton) {
-            submitButton.addEventListener('click', handleROIFormSubmission);
-            console.log('ROI Calculator integration initialized via button');
-        } else {
-            console.error('Could not find ROI form or submit button');
-        }
+        console.log('ROI Calculator Integration loaded');
     }
-});
-
-// Export for manual use
-window.calculateROI = handleROIFormSubmission;
-window.roiIntegration = {
-    collectData: collectROIFormData,
-    displayResults: displayROIResults,
-    calculate: handleROIFormSubmission
-};
+    
+})();
