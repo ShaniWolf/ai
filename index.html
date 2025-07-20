@@ -3,272 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מדד היעילות התפעולית בעידן ה-AI</title>
+    <title>מחשבון ROI - Hire Your CMO</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap');
         body {
-            font-family: 'Assistant', sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            text-align: center;
+            direction: rtl;
         }
         .container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-            box-sizing: border-box;
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        h1 {
-            color: #2c3e50;
-            font-weight: 700;
-        }
-        p {
-            font-size: 1.1em;
-            line-height: 1.6;
-            color: #555;
-        }
-        .hidden {
-            display: none;
-        }
-        .btn {
-            background: linear-gradient(45deg, #3498db, #8e44ad);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-        .answer-options button {
-            display: block;
-            width: 100%;
-            background-color: #ecf0f1;
-            color: #333;
-            border: 2px solid #bdc3c7;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .answer-options button:hover {
-            background-color: #d1d5d6;
-            border-color: #8e44ad;
-        }
-        #question-text {
-            font-size: 1.4em;
-            font-weight: 700;
+        .header {
+            text-align: center;
             margin-bottom: 30px;
         }
-        #results-analysis {
-            background-color: #eaf5ff;
-            border-right: 5px solid #3498db;
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #666;
+            font-size: 18px;
+        }
+        .quiz-container {
+            margin: 20px 0;
+        }
+        .question {
+            margin-bottom: 25px;
             padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        .question.active {
+            display: block;
+        }
+        .question h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .answer {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .answer:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        .answer.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        .navigation {
+            text-align: center;
             margin-top: 20px;
-            text-align: right;
-            border-radius: 5px;
-            font-size: 1.1em;
-            line-height: 1.7;
-            white-space: pre-wrap; /* This will respect newlines from the AI response */
         }
-        .loader {
-            border: 8px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 8px solid #3498db;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-            margin: 40px auto;
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .btn:hover {
+            background: #5a67d8;
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #quiz-results {
+            margin-top: 30px;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #667eea;
+            transition: width 0.3s ease;
         }
     </style>
 </head>
 <body>
-    <div class="container" id="main-container">
-        <div id="start-screen">
-            <h1>כמה יעיל תפעול השיווק שלך בעידן ה-AI?</h1>
-            <p>בתוך 3 דקות בלבד, קבלי ציון יעילות מותאם אישית וניתוח מבוסס AI המזהה את צוואר הבקבוק התפעולי מספר 1 שלך. בלי למלא פרטים, בלי התחייבות. רק ערך נטו.</p>
-            <button class="btn" id="start-btn">✨ התחלת האבחון</button>
+    <div class="container">
+        <div class="header">
+            <h1>מחשבון יעילות השיווק</h1>
+            <p>גלה כמה יעיל השיווק שלך ותקבל המלצות מותאמות אישית</p>
         </div>
-        <div id="quiz-screen" class="hidden">
-            <p id="question-text"></p>
-            <div id="answer-options" class="answer-options"></div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
         </div>
-        <div id="loading-screen" class="hidden">
-            <h2>מנתח את התשובות שלך...</h2>
-            <p>זה לוקח רק כמה שניות.</p>
-            <div class="loader"></div>
-        </div>
-        <div id="results-screen" class="hidden">
-            <h1>✨ הניתוח האישי שלך:</h1>
-            <p>בהתבסס על התשובות שלך, הנה תובנה מותאמת אישית על הזדמנות היעילות המרכזית שלך:</p>
-            <div id="results-analysis"></div>
-            <div id="cta-section" style="margin-top: 30px;">
-                <h2>רוצה להפוך את התובנה הזו לאסטרטגיה?</h2>
-                <p>התובנה מבוססת ה-AI סיקרנה אותך? בואי נקדיש 15 דקות, ללא עלות, כדי לפענח אותה ולזהות את הזדמנות ההכנסה היחידה הגדולה ביותר בתפעול הנוכחי שלך. בלי מצגת מכירות, רק אסטרטגיה.</p>
-                <a href="https://calendar.app.google/JGa1Ev2quNketc5M6" target="_blank" class="btn" style="text-decoration: none;">קביעת סקירת הזדמנויות של 15 דקות</a>
+
+        <div class="quiz-container" id="quiz-container">
+            <!-- Question 1 -->
+            <div class="question active" data-question="0">
+                <h3>עד כמה האוטומציה שלכם מפותחת?</h3>
+                <div class="answers">
+                    <div class="answer" onclick="selectAnswer(0, 1, 'אין לנו אוטומציה כלל')">אין לנו אוטומציה כלל</div>
+                    <div class="answer" onclick="selectAnswer(0, 2, 'יש לנו כלים בסיסיים')">יש לנו כלים בסיסיים</div>
+                    <div class="answer" onclick="selectAnswer(0, 3, 'אוטומציה חלקית')">אוטומציה חלקית</div>
+                    <div class="answer" onclick="selectAnswer(0, 4, 'אוטומציה מתקדמת')">אוטומציה מתקדמת</div>
+                    <div class="answer" onclick="selectAnswer(0, 5, 'אוטומציה מלאה')">אוטומציה מלאה</div>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question" data-question="1">
+                <h3>כמה זמן אתם מבזבזים על משימות ידניות?</h3>
+                <div class="answers">
+                    <div class="answer" onclick="selectAnswer(1, 1, 'רוב הזמן - מעל 80%')">רוב הזמן - מעל 80%</div>
+                    <div class="answer" onclick="selectAnswer(1, 2, 'הרבה זמן - 60-80%')">הרבה זמן - 60-80%</div>
+                    <div class="answer" onclick="selectAnswer(1, 3, 'בינוני - 40-60%')">בינוני - 40-60%</div>
+                    <div class="answer" onclick="selectAnswer(1, 4, 'מעט זמן - 20-40%')">מעט זמן - 20-40%</div>
+                    <div class="answer" onclick="selectAnswer(1, 5, 'כמעט לא - פחות מ-20%')">כמעט לא - פחות מ-20%</div>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question" data-question="2">
+                <h3>איך אתם עוקבים אחרי הנתונים?</h3>
+                <div class="answers">
+                    <div class="answer" onclick="selectAnswer(2, 1, 'אין לנו מעקב כלל')">אין לנו מעקב כלל</div>
+                    <div class="answer" onclick="selectAnswer(2, 2, 'מעקב בסיסי ידני')">מעקב בסיסי ידני</div>
+                    <div class="answer" onclick="selectAnswer(2, 3, 'כלים פשוטים')">כלים פשוטים</div>
+                    <div class="answer" onclick="selectAnswer(2, 4, 'מערכת מתקדמת')">מערכת מתקדמת</div>
+                    <div class="answer" onclick="selectAnswer(2, 5, 'BI מלא ואוטומטי')">BI מלא ואוטומטי</div>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question" data-question="3">
+                <h3>איך אתם מייצרים לידים?</h3>
+                <div class="answers">
+                    <div class="answer" onclick="selectAnswer(3, 1, 'רק רפרלים')">רק רפרלים</div>
+                    <div class="answer" onclick="selectAnswer(3, 2, 'פעילות בסיסית')">פעילות בסיסית</div>
+                    <div class="answer" onclick="selectAnswer(3, 3, 'מספר ערוצים')">מספר ערוצים</div>
+                    <div class="answer" onclick="selectAnswer(3, 4, 'אסטרטגיה מגוונת')">אסטרטגיה מגוונת</div>
+                    <div class="answer" onclick="selectAnswer(3, 5, 'מכונת לידים מושלמת')">מכונת לידים מושלמת</div>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question" data-question="4">
+                <h3>איך אתם מודדים ROI?</h3>
+                <div class="answers">
+                    <div class="answer" onclick="selectAnswer(4, 1, 'אין לנו מדידה')">אין לנו מדידה</div>
+                    <div class="answer" onclick="selectAnswer(4, 2, 'הערכה כללית')">הערכה כללית</div>
+                    <div class="answer" onclick="selectAnswer(4, 3, 'מדידה בסיסית')">מדידה בסיסית</div>
+                    <div class="answer" onclick="selectAnswer(4, 4, 'מדידה מדויקת')">מדידה מדויקת</div>
+                    <div class="answer" onclick="selectAnswer(4, 5, 'מדידה מתקדמת בזמן אמת')">מדידה מתקדמת בזמן אמת</div>
+                </div>
             </div>
         </div>
+
+        <div class="navigation">
+            <button class="btn" id="prevBtn" onclick="changeQuestion(-1)" disabled>הקודם</button>
+            <button class="btn" id="nextBtn" onclick="changeQuestion(1)" disabled>הבא</button>
+        </div>
+
+        <div id="quiz-results"></div>
     </div>
+
     <script>
-        // --- CONFIGURATION ---
-        const WEBHOOK_URL = 'https://eo3knqie30y3fhp.m.pipedream.net';
+        let currentQuestion = 0;
+        let answers = {};
+        const totalQuestions = 5;
 
-        const questions = [
-            {
-                key: 'automationLevel',
-                text: 'בסולם של 1 עד 5, עד כמה תהליכי השיווק המרכזיים שלכם (מיצירת ליד ועד לקמפיין) מתנהלים באופן אוטומטי?',
-                options: [
-                    { text: '1 - הכל ידני לחלוטין', value: '1' },
-                    { text: '2', value: '2' },
-                    { text: '3 - חצי-חצי', value: '3' },
-                    { text: '4', value: '4' },
-                    { text: '5 - אוטומציה מלאה', value: '5' }
-                ]
-            },
-            {
-                key: 'timeWaster',
-                text: 'מהו "זולל הזמן" הגדול ביותר של צוות השיווק שלך כיום?',
-                options: [
-                    { text: 'יצירת תוכן וכתיבה (קופי)', value: 'יצירת תוכן' },
-                    { text: 'ניהול קמפיינים ותפעול משימות', value: 'ניהול קמפיינים' },
-                    { text: 'ניתוח נתונים והפקת דוחות', value: 'ניתוח נתונים' },
-                    { text: 'תיאומים פנימיים ופגישות', value: 'תיאומים ופגישות' }
-                ]
-            },
-            {
-                key: 'dataUsage',
-                text: 'באיזו תדירות אתם משתמשים בנתונים (Data) כדי לקבל החלטות שיווקיות?',
-                options: [
-                    { text: 'כמעט אף פעם, פועלים לפי תחושת בטן', value: 'תחושת בטן' },
-                    { text: 'מדי פעם, כשיש דוח גדול', value: 'מדי פעם' },
-                    { text: 'באופן קבוע, רוב ההחלטות מגובות', value: 'באופן קבוע' },
-                    { text: 'תמיד, כל החלטה מבוססת נתונים', value: 'תמיד' }
-                ]
-            },
-            {
-                key: 'aiAdoption',
-                text: 'מהי רמת האימוץ של כלי AI גנרטיבי בצוות שלך?',
-                options: [
-                    { text: 'אפסית, אין שימוש כרגע', value: 'אפסית' },
-                    { text: 'התנסות ראשונית, שימוש ספורדי', value: 'התנסות ראשונית' },
-                    { text: 'שימוש קבוע על ידי חלק מהצוות', value: 'שימוש קבוע' },
-                    { text: 'משולב באופן מלא בזרימות העבודה', value: 'משולב מלא' }
-                ]
-            },
-            {
-                key: 'martechChallenge',
-                text: 'מהו האתגר המרכזי שלך בשילוב מערך ה-MarTech הקיים שלך?',
-                options: [
-                    { text: 'הכלים לא מדברים אחד עם השני (חוסר אינטגרציה)', value: 'חוסר אינטגרציה' },
-                    { text: 'קשה להוכיח ROI מהכלים שרכשנו', value: 'קושי בהוכחת ROI' },
-                    { text: 'הצוות לא מאמץ את הכלים באופן מלא', value: 'אימוץ נמוך בצוות' },
-                    { text: 'עלויות גבוהות מדי של המערך הקיים', value: 'עלויות גבוהות' }
-                ]
-            }
-        ];
-
-        // --- SCRIPT LOGIC (No need to edit below this line) ---
-        let currentQuestionIndex = 0;
-        const userAnswers = {};
-
-        const startScreen = document.getElementById('start-screen');
-        const quizScreen = document.getElementById('quiz-screen');
-        const loadingScreen = document.getElementById('loading-screen');
-        const resultsScreen = document.getElementById('results-screen');
-        const startBtn = document.getElementById('start-btn');
-        const questionText = document.getElementById('question-text');
-        const answerOptions = document.getElementById('answer-options');
-        const resultsAnalysis = document.getElementById('results-analysis');
-
-        startBtn.addEventListener('click', startQuiz);
-
-        function startQuiz() {
-            startScreen.classList.add('hidden');
-            quizScreen.classList.remove('hidden');
-            showQuestion();
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+            document.getElementById('progress').style.width = progress + '%';
         }
 
-        function showQuestion() {
-            const question = questions[currentQuestionIndex];
-            questionText.textContent = question.text;
-            answerOptions.innerHTML = '';
-            question.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option.text;
-                // Correctly pass the key and value to the selectAnswer function
-                button.onclick = () => selectAnswer(question.key, option.value);
-                answerOptions.appendChild(button);
-            });
-        }
-
-        function selectAnswer(key, value) {
-            userAnswers[key] = value;
-            console.log('Answer stored:', key, value);
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
-                showQuestion();
-            } else {
-                console.log('Quiz finished. Final answers:', userAnswers);
-                showLoadingAndGetResults();
-            }
-        }
-
-        async function showLoadingAndGetResults() {
-            quizScreen.classList.add('hidden');
-            loadingScreen.classList.remove('hidden');
-
-            try {
-                console.log('Sending data to webhook:', WEBHOOK_URL);
-                const response = await fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(userAnswers)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Webhook returned an error! Status: ${response.status}`);
+        function selectAnswer(questionIndex, value, text) {
+            answers[questionIndex] = { value, text };
+            
+            // Update UI
+            const question = document.querySelector(`[data-question="${questionIndex}"]`);
+            const answerElements = question.querySelectorAll('.answer');
+            answerElements.forEach(el => el.classList.remove('selected'));
+            event.target.classList.add('selected');
+            
+            // Enable next button
+            document.getElementById('nextBtn').disabled = false;
+            
+            // Auto advance after short delay
+            setTimeout(() => {
+                if (currentQuestion < totalQuestions - 1) {
+                    changeQuestion(1);
+                } else {
+                    showLoadingAndGetResults();
                 }
+            }, 800);
+        }
 
-                const result = await response.json();
-                console.log('Received response from webhook:', result);
-
-                // Assuming the webhook returns a simple text response in a field called 'analysis'
-                // Adjust 'result.analysis' if your Pipedream workflow returns a different structure
-                const analysisText = result.analysis || "לא התקבלה תשובה מהשרת. נסו שוב מאוחר יותר.";
-                resultsAnalysis.textContent = analysisText;
-
-            } catch (error) {
-                console.error('Error calling webhook:', error);
-                resultsAnalysis.textContent = "אופס, נתקלנו בבעיה טכנית. אנא נסו שוב מאוחר יותר.";
-            } finally {
-                loadingScreen.classList.add('hidden');
-                resultsScreen.classList.remove('hidden');
+        function changeQuestion(direction) {
+            const questions = document.querySelectorAll('.question');
+            questions[currentQuestion].classList.remove('active');
+            
+            currentQuestion += direction;
+            
+            if (currentQuestion >= 0 && currentQuestion < totalQuestions) {
+                questions[currentQuestion].classList.add('active');
+                updateProgress();
+                
+                // Update navigation buttons
+                document.getElementById('prevBtn').disabled = currentQuestion === 0;
+                document.getElementById('nextBtn').disabled = !answers[currentQuestion];
+                
+                if (currentQuestion === totalQuestions - 1) {
+                    document.getElementById('nextBtn').textContent = 'סיום';
+                } else {
+                    document.getElementById('nextBtn').textContent = 'הבא';
+                }
             }
         }
+
+        function showLoadingAndGetResults() {
+            document.querySelector('.quiz-container').style.display = 'none';
+            document.querySelector('.navigation').style.display = 'none';
+            document.getElementById('quiz-results').style.display = 'block';
+            
+            // This will be replaced by the integration script
+            document.getElementById('quiz-results').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 50px; height: 50px; animation: spin 2s linear infinite; margin: 0 auto 20px;"></div>
+                    <h3>מנתח את התשובות שלך...</h3>
+                    <p>אנא המתן בזמן שאנו מכינים עבורך ניתוח מותאם אישית</p>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+        }
+
+        // Initialize
+        updateProgress();
     </script>
+
+    <!-- ROI Calculator Integration Script -->
+    <script src="roi-calculator-integration.js"></script>
 </body>
 </html>
