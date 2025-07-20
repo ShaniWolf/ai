@@ -240,7 +240,7 @@
                 בהתבסס על נתונים אלה, כתוב פסקה של 3-4 משפטים. התחל בהכרה במצבה. לאחר מכן, זהה את הבעיה הבסיסית הסבירה ביותר המקשרת בין האתגרים שלה. סיים עם המלצה אחת ספציפית ובעלת השפעה גבוהה שהיא יכולה לבחון השבוע.
                 אל תשתמש בז'רגון שיווקי. אל תמכור שום מוצר. התמקד במתן עצה אמיתית וניתנת ליישום. הפלט לא יעלה על 100 מילים.
             `;
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
             const payload = {
               contents: [{
                 role: "user",
@@ -269,10 +269,7 @@
                 }
             } catch (error) {
                 console.error('שגיאה בקבלת ניתוח AI:', error);
-                resultsAnalysis.textContent = 'אוף! הג'ימיני הזאת מאכזבת ולא הצליחה להביא את הנתונים. אל דאגה, הלינק לקביעת פגישה עדיין עובד ואני אוכל להגיד  
-לכם את התוצאה, בסוף תמיד חייב את ה
-human in the loop :)
-קליק ובואו נדבר 👇';
+                resultsAnalysis.textContent = 'אופס, נתקלנו בבעיה רגעית בניתוח התוצאות. אנא ודאו שמפתח ה-API הוכנס כראוי ובדקו את ה-Console לקבלת פרטים נוספים.';
             } finally {
                 loadingScreen.classList.add('hidden');
                 resultsScreen.classList.remove('hidden');
