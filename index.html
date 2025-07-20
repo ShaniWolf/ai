@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--  השורה החדשה והחשובה שמתקנת את הבעיה -->
+    <meta name="referrer" content="origin">
     <title>מדד היעילות התפעולית בעידן ה-AI</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap');
@@ -256,6 +258,9 @@
         }
 
         async function getAIResults() {
+            //  ודאי שהחלפת את הטקסט הבא במפתח ה-API האישי שלך
+            const apiKey = "YOUR_API_KEY_HERE"; 
+
             const prompt = `
                 אתה יועץ MarTech ותפעול ברמה עולמית עם 15 שנות ניסיון. הטון שלך הוא בעל תובנות, אסטרטגי ומעודד. אתה מתמחה בזיהוי חוסר יעילות חבוי והזדמנויות לצמיחה.
 
@@ -273,8 +278,6 @@
                 אל תשתמש בז'רגון שיווקי. אל תמכור שום מוצר. התמקד במתן עצה אמיתית וניתנת ליישום. הפלט לא יעלה על 100 מילים.
             `;
             
-            // Gemini API call setup
-            const apiKey = "AIzaSyACf1IjM6gvEpqnxUC8RM7ZoIvtJMinasw"; // The environment will provide the key
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             
             const payload = {
@@ -292,7 +295,10 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`שגיאת API: ${response.statusText}`);
+                    // נזרוק שגיאה עם פרטי התגובה כדי להקל על הניפוי
+                    const errorData = await response.json();
+                    console.error('API Error Response:', errorData);
+                    throw new Error(`שגיאת API: ${response.statusText} (${response.status})`);
                 }
 
                 const result = await response.json();
@@ -308,7 +314,7 @@
 
             } catch (error) {
                 console.error('שגיאה בקבלת ניתוח AI:', error);
-                resultsAnalysis.textContent = 'אופס, נתקלנו בבעיה רגעית בניתוח התוצאות. אנא נסו לרענן את העמוד ולנסות שוב.';
+                resultsAnalysis.textContent = 'אופס, נתקלנו בבעיה רגעית בניתוח התוצאות. אנא ודאו שמפתח ה-API הוכנס כראוי ובדקו את ה-Console לקבלת פרטים נוספים.';
             } finally {
                 loadingScreen.classList.add('hidden');
                 resultsScreen.classList.remove('hidden');
