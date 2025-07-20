@@ -7,7 +7,6 @@
     <title>מדד היעילות התפעולית בעידן ה-AI</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap');
-        
         body {
             font-family: 'Assistant', sans-serif;
             background-color: #f4f7f6;
@@ -20,8 +19,7 @@
             min-height: 100vh;
             text-align: center;
         }
-
-       .container {
+        .container {
             background-color: #ffffff;
             padding: 40px;
             border-radius: 12px;
@@ -30,23 +28,19 @@
             width: 100%;
             box-sizing: border-box;
         }
-
         h1 {
             color: #2c3e50;
             font-weight: 700;
         }
-
         p {
             font-size: 1.1em;
             line-height: 1.6;
             color: #555;
         }
-
-       .hidden {
+        .hidden {
             display: none;
         }
-
-       .btn {
+        .btn {
             background: linear-gradient(45deg, #3498db, #8e44ad);
             color: white;
             border: none;
@@ -59,13 +53,11 @@
             margin-top: 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-
-       .btn:hover {
+        .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
         }
-
-       .answer-options button {
+        .answer-options button {
             display: block;
             width: 100%;
             background-color: #ecf0f1;
@@ -78,18 +70,15 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-
-       .answer-options button:hover {
+        .answer-options button:hover {
             background-color: #d1d5d6;
             border-color: #8e44ad;
         }
-        
         #question-text {
             font-size: 1.4em;
             font-weight: 700;
             margin-bottom: 30px;
         }
-
         #results-analysis {
             background-color: #eaf5ff;
             border-right: 5px solid #3498db;
@@ -100,8 +89,7 @@
             font-size: 1.1em;
             line-height: 1.7;
         }
-        
-       .loader {
+        .loader {
             border: 8px solid #f3f3f3;
             border-radius: 50%;
             border-top: 8px solid #3498db;
@@ -110,35 +98,28 @@
             animation: spin 1s linear infinite;
             margin: 40px auto;
         }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
     </style>
 </head>
 <body>
-
     <div class="container" id="main-container">
-        
         <div id="start-screen">
             <h1>כמה יעיל תפעול השיווק שלך בעידן ה-AI?</h1>
             <p>בתוך 3 דקות בלבד, קבלי ציון יעילות מותאם אישית וניתוח מבוסס AI המזהה את צוואר הבקבוק התפעולי מספר 1 שלך. בלי למלא פרטים, בלי התחייבות. רק ערך נטו.</p>
             <button class="btn" id="start-btn">✨ התחלת האבחון</button>
         </div>
-
         <div id="quiz-screen" class="hidden">
             <p id="question-text"></p>
             <div id="answer-options" class="answer-options"></div>
         </div>
-
         <div id="loading-screen" class="hidden">
             <h2>מנתח את התשובות שלך בעזרת Gemini AI...</h2>
             <p>זה לוקח רק כמה שניות.</p>
             <div class="loader"></div>
         </div>
-
         <div id="results-screen" class="hidden">
             <h1>✨ הניתוח האישי שלך:</h1>
             <p>בהתבסס על התשובות שלך, הנה תובנה מותאמת אישית על הזדמנות היעילות המרכזית שלך:</p>
@@ -149,9 +130,7 @@
                 <a href="https://calendar.app.google/JGa1Ev2quNketc5M6" target="_blank" class="btn" style="text-decoration: none;">קביעת סקירת הזדמנויות של 15 דקות</a>
             </div>
         </div>
-
     </div>
-
     <script>
         const questions = [
             {
@@ -206,28 +185,22 @@
                 ]
             }
         ];
-
         let currentQuestionIndex = 0;
         const userAnswers = {};
-
         const startScreen = document.getElementById('start-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const loadingScreen = document.getElementById('loading-screen');
         const resultsScreen = document.getElementById('results-screen');
-        
         const startBtn = document.getElementById('start-btn');
         const questionText = document.getElementById('question-text');
         const answerOptions = document.getElementById('answer-options');
         const resultsAnalysis = document.getElementById('results-analysis');
-
         startBtn.addEventListener('click', startQuiz);
-
         function startQuiz() {
             startScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
             showQuestion();
         }
-
         function showQuestion() {
             const question = questions[currentQuestionIndex];
             questionText.textContent = question.text;
@@ -239,7 +212,6 @@
                 answerOptions.appendChild(button);
             });
         }
-
         function selectAnswer(key, value) {
             userAnswers[key] = value;
             currentQuestionIndex++;
@@ -249,59 +221,44 @@
                 showLoadingAndGetResults();
             }
         }
-
         function showLoadingAndGetResults() {
             quizScreen.classList.add('hidden');
             loadingScreen.classList.remove('hidden');
             getAIResults();
         }
-
         async function getAIResults() {
-            //  ודאי שהחלפת את הטקסט הבא במפתח ה-API האישי והחדש ביותר שלך
-            const apiKey = "AIzaSyBQsfwYQAjUAE2eFNy0NkvrIypqb7B4i7Q"; 
-
+            const apiKey = "AIzaSyBQsfwYQAjUAE2eFNy0NkvrIypqb7B4i7Q";
             const prompt = `
                 אתה יועץ MarTech ותפעול ברמה עולמית עם 15 שנות ניסיון. הטון שלך הוא בעל תובנות, אסטרטגי ומעודד. אתה מתמחה בזיהוי חוסר יעילות חבוי והזדמנויות לצמיחה.
-
                 אתה מנתח את התוצאות של 'מדד יעילות תפעול השיווק' עבור משתמשת. המטרה שלך היא לספק ניתוח קצר, מותאם אישית, והמלצה אחת, ספציפית וניתנת ליישום.
-
                 להלן נתוני המשתמשת:
                 - רמת אוטומציה (1-5): ${userAnswers.automationLevel}
                 - זולל הזמן הגדול ביותר: "${userAnswers.timeWaster}"
                 - שימוש בנתונים לקבלת החלטות: "${userAnswers.dataUsage}"
                 - רמת אימוץ AI: "${userAnswers.aiAdoption}"
                 - אתגר MarTech מרכזי: "${userAnswers.martechChallenge}"
-
                 בהתבסס על נתונים אלה, כתוב פסקה של 3-4 משפטים. התחל בהכרה במצבה. לאחר מכן, זהה את הבעיה הבסיסית הסבירה ביותר המקשרת בין האתגרים שלה. סיים עם המלצה אחת ספציפית ובעלת השפעה גבוהה שהיא יכולה לבחון השבוע.
-
                 אל תשתמש בז'רגון שיווקי. אל תמכור שום מוצר. התמקד במתן עצה אמיתית וניתנת ליישום. הפלט לא יעלה על 100 מילים.
             `;
-            
-            // כתובת API מתוקנת
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
-            
             const payload = {
               contents: [{
                 role: "user",
                 parts: [{ text: prompt }]
               }]
             };
-
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
                 if (!response.ok) {
                     const errorData = await response.json();
                     console.error('API Error Response:', errorData);
                     throw new Error(`שגיאת API: ${response.statusText} (${response.status})`);
                 }
-
                 const result = await response.json();
-                
                 if (result.candidates && result.candidates.length > 0 &&
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
@@ -310,16 +267,14 @@
                 } else {
                   throw new Error('תגובת ה-API אינה מכילה תוכן תקין.');
                 }
-
             } catch (error) {
                 console.error('שגיאה בקבלת ניתוח AI:', error);
-                resultsAnalysis.textContent = אופס! אי אפשר לסמוך על הג'ימיני הזה. אבל אל דאגה, הלינק לקלנדר עובד. הקליקו כאן 👇 ואני כבר אחשב את זה בעצמי.';
+                resultsAnalysis.textContent = 'אופס, נתקלנו בבעיה רגעית בניתוח התוצאות. אנא ודאו שמפתח ה-API הוכנס כראוי ובדקו את ה-Console לקבלת פרטים נוספים.';
             } finally {
                 loadingScreen.classList.add('hidden');
                 resultsScreen.classList.remove('hidden');
             }
         }
     </script>
-
 </body>
 </html>
